@@ -67,5 +67,97 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':
 function addNotice(){const title=$('noticeTitle').value.trim(),body=$('noticeBody').value.trim();if(!title||!body){alert('শিরোনাম ও বিস্তারিত লিখুন।');return;}const a=JSON.parse(localStorage.getItem('madrasa_notices')||'[]');a.unshift({title,body,date:new Date().toLocaleDateString('bn-BD')});localStorage.setItem('madrasa_notices',JSON.stringify(a));$('noticeTitle').value='';$('noticeBody').value='';load();alert('এই ব্রাউজারে নোটিশ যোগ হয়েছে।');}
 function addClass(){const cls=$('className').value.trim(),sub=$('subject').value.trim(),lesson=$('lesson').value.trim();if(!cls||!sub||!lesson){alert('শ্রেণি, বিষয় ও পড়ার বিবরণ লিখুন।');return;}const a=JSON.parse(localStorage.getItem('madrasa_classes')||'[]');a.unshift({cls,sub,lesson});localStorage.setItem('madrasa_classes',JSON.stringify(a));$('className').value=$('subject').value=$('lesson').value='';load();alert('এই ব্রাউজারে ক্লাস আপডেট যোগ হয়েছে।');}
 $('year').textContent=new Date().getFullYear();load();
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = 'https://lmpvckflraiubdslirwf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_fmhKlGhOBt7WDtQHZ4U44A_lKMXhKk5';
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;',
+    '"':'&quot;', "'":'&#39;'
+  }[c]));
+}
+
+async function load() {
+  const { data, error } = await db
+    .from('notices')
+    .select('id,title,body')
+    .order('id', { ascending: false });
+
+  if (error) {
+    console.error(error);
+    if ($('noticelist')) {
+      $('noticelist').innerHTML = 'নোটিশ লোড করা যায়নি।';
+    }
+    return;
+  }
+
+  if ($('noticelist')) {
+    $('noticelist').innerHTML = data.length
+      ? data.map(n => `
+        <div class="notice">
+          <div class="date">নোটিশ</div>
+          <div>
+            <strong>${escapeHtml(n.title)}</strong>
+            <div>${escapeHtml(n.body)}</div>
+          </div>
+        </div>
+      `).join('')
+      : '<p>এখনো কোনো নোটিশ নেই।</p>';
+  }
+}
+
+async function adminLogin() {
+  const email = $('adminEmail').value.trim();
+  const password = $('adminPassword').value;
+
+  const { error } = await db.auth.signInWithPassword({
+    email, password
+  });
+
+  $('authMessage').textContent = error
+    ? 'লগইন হয়নি। ইমেইল ও পাসওয়ার্ড যাচাই করুন।'
+    : 'লগইন সফল হয়েছে।';
+}
+
+async function adminLogout() {
+  await db.auth.signOut();
+}
+
+async function addNotice() {
+  const title = $('noticeTitle').value.trim();
+  const body = $('noticeBody').value.trim();
+
+  if (!title || !body) {
+    alert('শিরোনাম ও বিস্তারিত লিখুন।');
+    return;
+  }
+
+  const { error } = await db.from('notices').insert({
+    title, body
+  });
+
+  if (error) {
+    alert('নোটিশ প্রকাশ হয়নি।');
+    console.error(error);
+    return;
+  }
+
+  $('noticeTitle').value = '';
+  $('noticeBody').value = '';
+  alert('নোটিশ প্রকাশ হয়েছে।');
+  await load();
+}
+
+if ($('year')) {
+  $('year').textContent = new Date().getFullYear();
+}
+
+load();
+</script>
+
 </body></html>
