@@ -67,5 +67,5 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':
 function addNotice(){const title=$('noticeTitle').value.trim(),body=$('noticeBody').value.trim();if(!title||!body){alert('শিরোনাম ও বিস্তারিত লিখুন।');return;}const a=JSON.parse(localStorage.getItem('madrasa_notices')||'[]');a.unshift({title,body,date:new Date().toLocaleDateString('bn-BD')});localStorage.setItem('madrasa_notices',JSON.stringify(a));$('noticeTitle').value='';$('noticeBody').value='';load();alert('এই ব্রাউজারে নোটিশ যোগ হয়েছে।');}
 function addClass(){const cls=$('className').value.trim(),sub=$('subject').value.trim(),lesson=$('lesson').value.trim();if(!cls||!sub||!lesson){alert('শ্রেণি, বিষয় ও পড়ার বিবরণ লিখুন।');return;}const a=JSON.parse(localStorage.getItem('madrasa_classes')||'[]');a.unshift({cls,sub,lesson});localStorage.setItem('madrasa_classes',JSON.stringify(a));$('className').value=$('subject').value=$('lesson').value='';load();alert('এই ব্রাউজারে ক্লাস আপডেট যোগ হয়েছে।');}
 $('year').textContent=new Date().getFullYear();load();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body></html>
