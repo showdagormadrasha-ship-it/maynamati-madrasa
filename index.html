@@ -68,6 +68,23 @@ const SUPABASE_KEY = 'sb_publishable_fmhKlGhOBt7WDtQHZ4U44A_lKMXhKk5';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
 
+const admin = $('admin');
+
+admin.insertAdjacentHTML('afterbegin', `
+  <div id="authBox" style="background:#fff;padding:18px;border-radius:12px;margin:15px 0">
+    <h3>অ্যাডমিন লগইন</h3>
+    <input id="adminEmail" type="email"
+      placeholder="আপনার ইমেইল"
+      style="width:100%;padding:12px;margin:8px 0">
+    <input id="adminPassword" type="password"
+      placeholder="আপনার পাসওয়ার্ড"
+      style="width:100%;padding:12px;margin:8px 0">
+    <button class="btn" onclick="adminLogin()">লগইন করুন</button>
+    <p id="authMessage"></p>
+    <button class="btn" onclick="adminLogout()">লগআউট</button>
+  </div>
+`);
+
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({
     '&':'&amp;', '<':'&lt;', '>':'&gt;',
