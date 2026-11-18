@@ -58,16 +58,9 @@ footer{background:#123b2d;color:#e7eee8;padding:35px 22px}.foot{max-width:1180px
 <section class="wrap"><div class="admin" id="admin"><h3>অ্যাডমিন প্যানেল — ডেমো</h3><p class="admin-note">নিরাপত্তা: এই ডেমো অ্যাডমিন প্যানেলটি এখনো প্রকৃত পাসওয়ার্ড-সুরক্ষিত নয়। লাইভ করার আগে ব্যক্তিগত অ্যাডমিন অ্যাকাউন্ট, সার্ভার-সাইড অনুমতি এবং ডাটাবেস নিরাপত্তা যুক্ত করতে হবে। সাধারণ দর্শক শুধু তথ্য দেখতে পারবেন; কেবল অনুমোদিত অ্যাডমিনই পরিবর্তন করতে পারবেন।</p><label>নতুন নোটিশ</label><input id="noticeTitle" placeholder="নোটিশের শিরোনাম"><textarea id="noticeBody" rows="2" placeholder="নোটিশের বিস্তারিত"></textarea><button class="btn" onclick="addNotice()">নোটিশ যোগ করুন</button><hr style="border:0;border-top:1px solid #eee;margin:20px 0"><label>ক্লাসের পড়ার আপডেট</label><div class="admin-row"><input id="className" placeholder="শ্রেণি (যেমন: দাখিল ৬ষ্ঠ)"><input id="subject" placeholder="বিষয়"></div><textarea id="lesson" rows="2" placeholder="আজকের পড়া / বাড়ির কাজ"></textarea><button class="btn" onclick="addClass()">ক্লাস আপডেট যোগ করুন</button></div></section>
 </main>
 <footer><div class="foot"><div><h3>ময়নামতি দারুস সুন্নাত আলিম মাদ্রাসা</h3><p>দ্বীনি ও আধুনিক শিক্ষার সমন্বয়ে আলোকিত মানুষ গড়ার প্রত্যয়।</p></div><div><h3>প্রতিষ্ঠানের ঠিকানা</h3><p>পূর্ব শাহদৌলতপুর, ময়নামতি, কুমিল্লা, বাংলাদেশ</p></div><div><h3>যোগাযোগ</h3><p>মোবাইল: 01309105296</p><p>ভারপ্রাপ্ত অধ্যক্ষ: মাওঃ মাহবুবুর রহমান</p></div></div><div class="copyright">© <span id="year"></span> ময়নামতি দারুস সুন্নাত আলিম মাদ্রাসা — সর্বস্বত্ব সংরক্ষিত</div></footer>
-<script>
-const $=id=>document.getElementById(id);
-function load(){const ns=JSON.parse(localStorage.getItem('madrasa_notices')||'[]');const cs=JSON.parse(localStorage.getItem('madrasa_classes')||'[]');
-$('noticeList').innerHTML=ns.length?ns.map(n=>`<div class="notice"><div class="date">${n.date}</div><div><strong>${escapeHtml(n.title)}</strong><small>${escapeHtml(n.body)}</small></div></div>`).join(''):$('noticeList').innerHTML;
-$('classList').innerHTML=cs.length?cs.map(c=>`<div class="class-item"><div><strong>${escapeHtml(c.cls)} — ${escapeHtml(c.sub)}</strong><div style="color:#6c7770;font-size:14px">${escapeHtml(c.lesson)}</div></div><span class="tag">পড়ার আপডেট</span></div>`).join(''):$('classList').innerHTML;}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function addNotice(){const title=$('noticeTitle').value.trim(),body=$('noticeBody').value.trim();if(!title||!body){alert('শিরোনাম ও বিস্তারিত লিখুন।');return;}const a=JSON.parse(localStorage.getItem('madrasa_notices')||'[]');a.unshift({title,body,date:new Date().toLocaleDateString('bn-BD')});localStorage.setItem('madrasa_notices',JSON.stringify(a));$('noticeTitle').value='';$('noticeBody').value='';load();alert('এই ব্রাউজারে নোটিশ যোগ হয়েছে।');}
-function addClass(){const cls=$('className').value.trim(),sub=$('subject').value.trim(),lesson=$('lesson').value.trim();if(!cls||!sub||!lesson){alert('শ্রেণি, বিষয় ও পড়ার বিবরণ লিখুন।');return;}const a=JSON.parse(localStorage.getItem('madrasa_classes')||'[]');a.unshift({cls,sub,lesson});localStorage.setItem('madrasa_classes',JSON.stringify(a));$('className').value=$('subject').value=$('lesson').value='';load();alert('এই ব্রাউজারে ক্লাস আপডেট যোগ হয়েছে।');}
-$('year').textContent=new Date().getFullYear();load();
 
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = 'https://lmpvckflraiubdslirwf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_fmhKlGhOBt7WDtQHZ4U44A_lKMXhKk5';
