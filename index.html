@@ -168,6 +168,61 @@ if ($('year')) {
 }
 
 load();
+function showRecoveryForm() {
+  if (document.getElementById('recoveryBox')) return;
+
+  const box = document.createElement('div');
+  box.id = 'recoveryBox';
+  box.style.cssText =
+    'position:fixed;inset:0;background:white;z-index:99999;padding:30px;text-align:center';
+
+  box.innerHTML = `
+    <h2>নতুন পাসওয়ার্ড দিন</h2>
+    <input id="newPassword" type="password"
+      placeholder="নতুন পাসওয়ার্ড"
+      style="padding:12px;width:90%;margin:12px 0">
+    <button id="saveNewPassword" class="btn">
+      পাসওয়ার্ড পরিবর্তন করুন
+    </button>
+    <p id="resetMessage"></p>
+  `;
+
+  document.body.appendChild(box);
+
+  document.getElementById('saveNewPassword').onclick =
+    async function () {
+      const password =
+        document.getElementById('newPassword').value;
+
+      const msg = document.getElementById('resetMessage');
+
+      if (password.length < 6) {
+        msg.textContent = 'কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন।';
+        return;
+      }
+
+      const { error } = await db.auth.updateUser({
+        password: password
+      });
+
+      msg.textContent = error
+        ? 'সমস্যা হয়েছে: ' + error.message
+        : 'পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।';
+    };
+}
+
+db.auth.onAuthStateChange((event) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    showRecoveryForm();
+  }
+});
+
+if (window.location.hash.includes('type=recovery')) {
+  db.auth.getSession().then(({ data }) => {
+    if (data.session) showRecoveryForm();
+  });
+}
+
 </script>
 
 </body></html>
